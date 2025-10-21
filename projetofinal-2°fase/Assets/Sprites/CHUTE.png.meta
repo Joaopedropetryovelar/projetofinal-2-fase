@@ -1,10 +1,10 @@
 fileFormatVersion: 2
-guid: 24fb19c8fe8e52a42a17625b7eb15e5a
+guid: 13fe09de810a95d4988d22f9eec24e57
 TextureImporter:
   internalIDToNameTable:
   - first:
-      213: -7271151127088025044
-    second: pngfind.com-soccer-ball-png-1835251_0
+      213: -6016123024941236087
+    second: CHUTE_0
   externalObjects: {}
   serializedVersion: 13
   mipmaps:
@@ -37,7 +37,7 @@ TextureImporter:
   maxTextureSize: 2048
   textureSettings:
     serializedVersion: 2
-    filterMode: 1
+    filterMode: 0
     aniso: 1
     mipBias: 0
     wrapU: 1
@@ -75,7 +75,7 @@ TextureImporter:
     maxTextureSize: 2048
     resizeAlgorithm: 0
     textureFormat: -1
-    textureCompression: 1
+    textureCompression: 0
     compressionQuality: 50
     crunchedCompression: 0
     allowsAlphaSplitting: 0
@@ -100,23 +100,89 @@ TextureImporter:
     serializedVersion: 2
     sprites:
     - serializedVersion: 2
-      name: pngfind.com-soccer-ball-png-1835251_0
+      name: CHUTE_0
       rect:
         serializedVersion: 2
-        x: 0
+        x: 6
         y: 0
-        width: 1055
-        height: 1049
+        width: 914
+        height: 186
       alignment: 0
-      pivot: {x: 0, y: 0}
+      pivot: {x: 0.5, y: 0.5}
       border: {x: 0, y: 0, z: 0, w: 0}
       customData: 
       outline: []
       physicsShape: []
       tessellationDetail: -1
       bones: []
-      spriteID: c22bcb9f29ea71b90800000000000000
-      internalID: -7271151127088025044
+      spriteID: 980445dcbff628ca0800000000000000
+      internalID: -6016123024941236087
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CHUTE_1
+      rect:
+        serializedVersion: 2
+        x: 407
+        y: 80
+        width: 88
+        height: 110
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 1df3ae9fd52d0904481491c953d9a2a8
+      internalID: 1548348865
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CHUTE_2
+      rect:
+        serializedVersion: 2
+        x: 0
+        y: 0
+        width: 168
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 0c79e24abdee226488488a3e77b26a92
+      internalID: -1277840740
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: CHUTE_3
+      rect:
+        serializedVersion: 2
+        x: 15
+        y: 0
+        width: 160
+        height: 190
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: 0
+      bones: []
+      spriteID: 2260f3548e3121d4b80c60ca1447368b
+      internalID: -200502804
       vertices: []
       indices: 
       edges: []
@@ -125,7 +191,7 @@ TextureImporter:
     customData: 
     physicsShape: []
     bones: []
-    spriteID: 
+    spriteID: 2587263c205dc184c9de0c8aa1d069b1
     internalID: 0
     vertices: []
     indices: 
@@ -135,7 +201,10 @@ TextureImporter:
     spriteCustomMetadata:
       entries: []
     nameFileIdTable:
-      pngfind.com-soccer-ball-png-1835251_0: -7271151127088025044
+      CHUTE_0: -6016123024941236087
+      CHUTE_1: 1548348865
+      CHUTE_2: -1277840740
+      CHUTE_3: -200502804
   mipmapLimitGroupName: 
   pSDRemoveMatte: 0
   userData: 
