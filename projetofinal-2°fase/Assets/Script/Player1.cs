@@ -1,104 +1,114 @@
 using UnityEngine;
 using System.Collections;
 
-public class Player : MonoBehaviour
+public class Player1 : MonoBehaviour
 {
+    public float speed = 5f;
+    public float jumpForce = 7f;
+
+    private bool isGrounded = true;
+    private bool isKicking = false;
+
     private Rigidbody2D rb;
     private Animator anim;
     private Vector3 originalScale;
 
-    [Header("Movimento")]
-    public float speed = 5f;
-    public float jumpForce = 5f;
-    private float move;
-
-    private bool isKicking = false;
-    private bool isGround = true; // indica se est· no ch„o
+    private string currentAnim = "";
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         originalScale = transform.localScale;
-
-        if (anim == null)
-            Debug.LogError(" Nenhum Animator encontrado no Player!");
-        if (anim.runtimeAnimatorController == null)
-            Debug.LogError(" Nenhum Animator Controller atribuÌdo ao Animator do Player!");
-
-        // Ignora colis„o entre Player e Ball (a bola precisa estar no layer "Ball")
-        int playerLayer = LayerMask.NameToLayer("Player");
-        int ballLayer = LayerMask.NameToLayer("Ball");
-        if (playerLayer >= 0 && ballLayer >= 0)
-            Physics2D.IgnoreLayerCollision(playerLayer, ballLayer, true);
     }
 
     void Update()
     {
-        if (anim == null || anim.runtimeAnimatorController == null)
-            return;
+        float move = 0f;
 
-        if (isKicking)
-            return;
+        // Movimento A/D
+        if (Input.GetKey(KeyCode.A)) move = -1f;
+        if (Input.GetKey(KeyCode.D)) move = 1f;
 
-        move = Input.GetAxisRaw("Horizontal");
+        // Aplicar movimento e parar quando move == 0
         rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
 
-        // Virar o personagem
-        if (move > 0)
-            transform.localScale = new Vector3(Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
-        else if (move < 0)
-            transform.localScale = new Vector3(-Mathf.Abs(originalScale.x), originalScale.y, originalScale.z);
+        // Virar sprite
+        if (move > 0) transform.localScale = new Vector3(originalScale.x, originalScale.y, originalScale.z);
+        else if (move < 0) transform.localScale = new Vector3(-originalScale.x, originalScale.y, originalScale.z);
 
-        // Atualiza animaÁ„o de movimento
-        if (!Input.GetKey(KeyCode.Space)) // n„o muda animaÁ„o enquanto pula
+        // Anima√ß√£o de movimento
+        if (!isKicking && isGrounded)
         {
-            if (move != 0 && isGround)
-                anim.CrossFade("Run", 0f);
-            else if (isGround)
-                anim.CrossFade("idle", 0f);
+            if (move != 0)
+                PlayAnim("Run");
+            else
+                PlayAnim("Idle");
         }
 
-        // Chutar
-        if (Input.GetKeyDown(KeyCode.Z))
-            StartCoroutine(Chutar());
-
-        // Pular
-        Jump();
-    }
-
-    private IEnumerator Chutar()
-    {
-        isKicking = true;
-        anim.CrossFade("Chute", 0f);
-
-        yield return new WaitForSeconds(0.4f); // duraÁ„o do chute
-
-        isKicking = false;
-
-        // Retorna para Run ou Idle
-        if (move != 0 && isGround)
-            anim.CrossFade("Run", 0f);
-        else if (isGround)
-            anim.CrossFade("idle", 0f);
-    }
-
-    void Jump()
-    {
-        if (Input.GetKeyDown(KeyCode.Space) && isGround)
+        // Pular (W)
+        if (Input.GetKeyDown(KeyCode.W) && isGrounded)
         {
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-            anim.CrossFade("Salto", 0f); // animaÁ„o de pulo
-            isGround = false;
+            PlayAnim("Jump");
+            isGrounded = false;
+        }
+
+        // Chutar (S)
+        if (Input.GetKeyDown(KeyCode.S) && isGrounded && !isKicking)
+        {
+            StartCoroutine(Chute());
         }
     }
 
-    private void OnCollisionEnter2D(Collision2D collision)
+    private IEnumerator Chute()
     {
-        // Detecta ch„o pelo collider
+        isKicking = true;
+        PlayAnim("Chute");
+        yield return new WaitForSeconds(0.5f);
+        isKicking = false;
+
+        // Voltar para Idle ou Run
+        if (Mathf.Abs(rb.linearVelocity.x) > 0.1f)
+            PlayAnim("Run");
+        else
+            PlayAnim("Idle");
+    }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        // Ignorar colis√£o com a bola
+        if (collision.gameObject.CompareTag("bola"))
+            return;
+
+        // Detectar ch√£o
         if (collision.gameObject.CompareTag("Ground"))
         {
-            isGround = true;
+            isGrounded = true;
+            if (!isKicking)
+            {
+                if (Mathf.Abs(rb.linearVelocity.x) > 0.1f)
+                    PlayAnim("Run");
+                else
+                    PlayAnim("Idle");
+            }
+        }
+    }
+
+    // Fun√ß√£o segura para tocar anima√ß√£o apenas se for diferente da atual
+    void PlayAnim(string stateName)
+    {
+        if (currentAnim == stateName) return;
+
+        int layer = 0; 
+        if (anim.HasState(layer, Animator.StringToHash(stateName)))
+        {
+            anim.Play(stateName, layer);
+            currentAnim = stateName;
+        }
+        else
+        {
+            Debug.LogWarning($"‚ö†Ô∏è Estado '{stateName}' n√£o encontrado no Animator de {gameObject.name}");
         }
     }
 }
