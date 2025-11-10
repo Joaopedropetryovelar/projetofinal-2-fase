@@ -5,6 +5,7 @@ public class Player1 : MonoBehaviour
 {
     public float speed = 5f;
     public float jumpForce = 7f;
+    public float chuteForca = 10f; // força do chute
 
     private bool isGrounded = true;
     private bool isKicking = false;
@@ -15,11 +16,16 @@ public class Player1 : MonoBehaviour
 
     private string currentAnim = "";
 
+    private GameObject bola; // referência para a bola
+
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         originalScale = transform.localScale;
+
+        // procura automaticamente a bola pela tag "bola" (minúsculo)
+        bola = GameObject.FindGameObjectWithTag("bola");
     }
 
     void Update()
@@ -30,14 +36,14 @@ public class Player1 : MonoBehaviour
         if (Input.GetKey(KeyCode.A)) move = -1f;
         if (Input.GetKey(KeyCode.D)) move = 1f;
 
-        // Aplicar movimento e parar quando move == 0
+        // Aplicar movimento
         rb.linearVelocity = new Vector2(move * speed, rb.linearVelocity.y);
 
         // Virar sprite
         if (move > 0) transform.localScale = new Vector3(originalScale.x, originalScale.y, originalScale.z);
         else if (move < 0) transform.localScale = new Vector3(-originalScale.x, originalScale.y, originalScale.z);
 
-        // Animação de movimento
+        // Animações de movimento
         if (!isKicking && isGrounded)
         {
             if (move != 0)
@@ -65,7 +71,35 @@ public class Player1 : MonoBehaviour
     {
         isKicking = true;
         PlayAnim("Chute");
-        yield return new WaitForSeconds(0.5f);
+
+        // Espera um pouco antes de aplicar o chute
+        yield return new WaitForSeconds(0.2f);
+
+        // Chuta a bola se estiver próxima
+        if (bola != null)
+        {
+            float distancia = Vector2.Distance(transform.position, bola.transform.position);
+
+            // Só chuta se estiver perto o suficiente
+            if (distancia < 2f)
+            {
+                Rigidbody2D rbBola = bola.GetComponent<Rigidbody2D>();
+                if (rbBola != null)
+                {
+                    // Direção do chute (pra frente e um pouco pra cima)
+                    Vector2 direcao;
+                    if (transform.localScale.x < 0)
+                        direcao = Vector2.left + Vector2.up * 0.3f;
+                    else
+                        direcao = Vector2.right + Vector2.up * 0.3f;
+
+                    // Aplica a força do chute
+                    rbBola.AddForce(direcao.normalized * chuteForca, ForceMode2D.Impulse);
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(0.3f);
         isKicking = false;
 
         // Voltar para Idle ou Run
@@ -77,10 +111,6 @@ public class Player1 : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
-        // Ignorar colisão com a bola
-        if (collision.gameObject.CompareTag("bola"))
-            return;
-
         // Detectar chão
         if (collision.gameObject.CompareTag("Ground"))
         {
@@ -100,7 +130,7 @@ public class Player1 : MonoBehaviour
     {
         if (currentAnim == stateName) return;
 
-        int layer = 0; 
+        int layer = 0;
         if (anim.HasState(layer, Animator.StringToHash(stateName)))
         {
             anim.Play(stateName, layer);

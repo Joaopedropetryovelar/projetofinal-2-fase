@@ -546,6 +546,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   jumpForce: 7
+  chuteForca: 18
 --- !u!61 &175788014
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -982,6 +983,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   speed: 5
   jumpForce: 5
+  chuteForca: 18
 --- !u!61 &324698581
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -1183,8 +1185,8 @@ Transform:
   m_GameObject: {fileID: 357038609}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -11.1354, y: 1.6916, z: 0}
-  m_LocalScale: {x: 2.1113422, y: 3.8812895, z: 1}
+  m_LocalPosition: {x: -12.2052, y: -1.9278, z: 0}
+  m_LocalScale: {x: 2.9670663, y: 7.768217, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
@@ -2095,6 +2097,9 @@ MonoBehaviour:
   placarTexto: {fileID: 764831905}
   nomeTime1: "Jo\xE3o"
   nomeTime2: Arthur
+  player1: {fileID: 324698579}
+  player2: {fileID: 175788012}
+  bola: {fileID: 159460015}
 --- !u!1 &1096364683
 GameObject:
   m_ObjectHideFlags: 0
@@ -2752,8 +2757,8 @@ Transform:
   m_GameObject: {fileID: 2067684467}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 11.507, y: 1.4129, z: 0}
-  m_LocalScale: {x: 1.8887998, y: 3.4790163, z: 1}
+  m_LocalPosition: {x: 13.3613, y: -1.3863, z: 0}
+  m_LocalScale: {x: 4.313724, y: 9.077228, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}

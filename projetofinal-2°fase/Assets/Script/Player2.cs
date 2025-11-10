@@ -5,25 +5,32 @@ public class Player2 : MonoBehaviour
 {
     public float speed = 5f;
     public float jumpForce = 7f;
+    public float chuteForca = 10f;
+
     private bool isGrounded = true;
     private bool isKicking = false;
 
     private Rigidbody2D rb;
     private Animator anim;
     private Vector3 originalScale;
+    private string currentAnim = "";
+
+    private GameObject bola;
 
     void Start()
     {
         rb = GetComponent<Rigidbody2D>();
         anim = GetComponent<Animator>();
         originalScale = transform.localScale;
+
+        bola = GameObject.FindGameObjectWithTag("bola");
     }
 
     void Update()
     {
         float move = 0f;
 
-        // Movimento ← e →
+        // Movimento ← →
         if (Input.GetKey(KeyCode.LeftArrow)) move = -1f;
         if (Input.GetKey(KeyCode.RightArrow)) move = 1f;
 
@@ -34,46 +41,64 @@ public class Player2 : MonoBehaviour
         if (move > 0) transform.localScale = new Vector3(originalScale.x, originalScale.y, originalScale.z);
         else if (move < 0) transform.localScale = new Vector3(-originalScale.x, originalScale.y, originalScale.z);
 
-        // Se estiver chutando, não trocar animação
-        if (!isKicking)
+        // Animação de movimento
+        if (!isKicking && isGrounded)
         {
-            // Alternar animações de movimento
-            if (isGrounded)
-            {
-                if (move != 0)
-                    anim.Play("Correr");   // animação de correr
-                else
-                    anim.Play("Parado");   // animação parada
-            }
+            if (move != 0)
+                PlayAnim("Correr");
+            else
+                PlayAnim("Parado");
+        }
 
-            // Pular (↑)
-            if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
-            {
-                rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
-                anim.Play("Pulo");         // animação de pulo
-                isGrounded = false;
-            }
+        // Pular (↑)
+        if (Input.GetKeyDown(KeyCode.UpArrow) && isGrounded)
+        {
+            rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
+            PlayAnim("Pulo");
+            isGrounded = false;
+        }
 
-            // Chutar (↓)
-            if (Input.GetKeyDown(KeyCode.DownArrow) && isGrounded)
-            {
-                StartCoroutine(Kick());
-            }
+        // Chutar (↓)
+        if (Input.GetKeyDown(KeyCode.DownArrow) && isGrounded && !isKicking)
+        {
+            StartCoroutine(Chute());
         }
     }
 
-    private IEnumerator Kick()
+    private IEnumerator Chute()
     {
         isKicking = true;
-        anim.Play("Kick"); // animação de chute
-        yield return new WaitForSeconds(0.5f);
+        PlayAnim("Kick");
+
+        yield return new WaitForSeconds(0.2f);
+
+        if (bola != null)
+        {
+            float distancia = Vector2.Distance(transform.position, bola.transform.position);
+
+            if (distancia < 2f)
+            {
+                Rigidbody2D rbBola = bola.GetComponent<Rigidbody2D>();
+                if (rbBola != null)
+                {
+                    Vector2 direcao;
+                    if (transform.localScale.x < 0)
+                        direcao = Vector2.left + Vector2.up * 0.3f;
+                    else
+                        direcao = Vector2.right + Vector2.up * 0.3f;
+
+                    rbBola.AddForce(direcao.normalized * chuteForca, ForceMode2D.Impulse);
+                }
+            }
+        }
+
+        yield return new WaitForSeconds(0.3f);
         isKicking = false;
 
-        // Volta para Idle ou Run automaticamente
         if (Mathf.Abs(rb.linearVelocity.x) > 0.1f)
-            anim.Play("Correr");
+            PlayAnim("Correr");
         else
-            anim.Play("Parado");
+            PlayAnim("Parado");
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -84,10 +109,26 @@ public class Player2 : MonoBehaviour
             if (!isKicking)
             {
                 if (Mathf.Abs(rb.linearVelocity.x) > 0.1f)
-                    anim.Play("Correr");
+                    PlayAnim("Correr");
                 else
-                    anim.Play("Parado");
+                    PlayAnim("Parado");
             }
+        }
+    }
+
+    void PlayAnim(string stateName)
+    {
+        if (currentAnim == stateName) return;
+
+        int layer = 0;
+        if (anim.HasState(layer, Animator.StringToHash(stateName)))
+        {
+            anim.Play(stateName, layer);
+            currentAnim = stateName;
+        }
+        else
+        {
+            Debug.LogWarning($"⚠️ Estado '{stateName}' não encontrado no Animator de {gameObject.name}");
         }
     }
 }
