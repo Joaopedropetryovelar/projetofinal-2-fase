@@ -982,7 +982,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   speed: 5
-  jumpForce: 5
+  jumpForce: 7
   chuteForca: 18
 --- !u!61 &324698581
 BoxCollider2D:
